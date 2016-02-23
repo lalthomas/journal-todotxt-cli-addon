@@ -3,3 +3,111 @@
 # Copyright (c) Lal Thomas, http://lalamboori.blogspot.in
 # License: GPL3, http://www.gnu.org/copyleft/gpl.html
 
+# Stop Verbose lines, thanks to Mark Harrison
+TODOTXT_VERBOSE=0
+TODOTXT_PLAIN=0
+
+function usage() {
+  echo "  $(basename $0) [OPTION] [TERM]"
+  
+  exit
+}
+
+create(){
+
+	docJournalFile="$@"	
+	
+	# check if file exists or not
+	if [ ! -f "$docJournalFile" ];then
+	  
+	  "$TODO_FULL_SH" markdown add H1 "$today $dayOfWeeK Journal" "$docJournalFile"
+	  "$TODO_FULL_SH" markdown add p "*Date of Creation* : $longdate" "$docJournalFile"	  
+	  "$TODO_FULL_SH" markdown add H2 "Scheduled Tasks" "$docJournalFile"   
+	  
+	  # Dump the today's scheduled task to todo.txt and extra line breaks	  
+	  sed -n -e 's/'$longdate'/* &/p'<"$doTodoFile" >>"$docJournalFile"
+	  printf "\n">>"$docJournalFile"
+
+	  # Read input file into a string variable. 
+	  # Thanks : http://stackoverflow.com/a/2789399/2182047  
+	  copyfilecontent=$(cat "$doJournalPath")
+	  #copy contents to journal file
+	  printf "$copyfilecontent" >>"$docJournalFile"  
+	  # add two blank line
+	  printf "\n\n" >>"$docJournalFile"	  
+
+	fi
+	"$TODO_FULL_SH" file open "$docJournalFile"
+}
+
+# //TODO : improve
+
+addDoneItemsToJournal(){
+
+	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$docJournalFile"
+	"$TODO_FULL_SH" listall "x $longdate" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$docJournalFile"
+}
+
+addDoneItemsToYesterdayJournal(){
+
+	## //TODO : improve
+	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$docYesterdayJournalFile"
+	"$TODO_FULL_SH" listall "x $longyesterday" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$docYesterdayJournalFile"
+
+}
+
+# Get action
+action=$1
+shift
+
+# Get option
+option=$1;
+shift
+
+ case $option in
+
+	"usage")
+		usage
+		exit	
+	;;
+	
+	"create")
+		if [[ -z "$1" ]]; then
+		   echo "journal error : few argument"
+		   #usage
+		else		   
+		   filepath="$@"		   
+		   create $filepath
+		fi					
+		exit
+	;;
+	
+	"log")	  
+	
+	#TODO: update with filepath
+		if [[ -z "$1" ]]; then
+		   echo "journal error : few argument"
+		   #usage
+		else
+		   PARAM="$1"		
+		   case "$PARAM" in
+				today)
+					addDoneItemsToJournal	
+					;;
+				yesterday)
+					addDoneItemsToYesterdayJournal
+					;;					
+				esac
+		fi	
+		exit
+    ;;	
+	
+	*)
+	# list planner file	
+	 echo
+	 echo "journal error : arguments - $@ - not valid" 
+	 echo 
+	 usage
+	 exit
+	;;	   
+esac
