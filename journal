@@ -42,8 +42,7 @@ create(){
 
 open(){
 	
-	docJournalFile="$@"	
-	
+	docJournalFile="$@"		
 	# check if file exists or not
 	if [ -f "$docJournalFile" ];then
 		"$TODO_FULL_SH" file open "$docJournalFile"
