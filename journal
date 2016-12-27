@@ -8,7 +8,7 @@ TODOTXT_VERBOSE=0
 TODOTXT_PLAIN=0
 
 function usage() {
-  echo "  $(basename $0) [OPTION] [TERM]"
+  echo "  journal [OPTION] [TERM]"
   
   exit
 }
@@ -38,6 +38,16 @@ create(){
 
 	fi
 	"$TODO_FULL_SH" file open "$docJournalFile"
+}
+
+open(){
+	
+	docJournalFile="$@"	
+	
+	# check if file exists or not
+	if [ -f "$docJournalFile" ];then
+		"$TODO_FULL_SH" file open "$docJournalFile"
+	fi	
 }
 
 # //TODO : improve
@@ -80,6 +90,17 @@ shift
 		   create $filepath
 		fi					
 		exit
+	;;
+	
+	"open")
+		if [[ -z "$1" ]]; then
+		   echo "journal error : few argument"
+		   #usage
+		else		   
+		   filepath="$@"		   
+		   open $filepath
+		fi					
+		exit		
 	;;
 	
 	"log")	  
