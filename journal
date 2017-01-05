@@ -7,61 +7,143 @@
 TODOTXT_VERBOSE=0
 TODOTXT_PLAIN=0
 
+author="Lal Thomas"
+docRootPath="$rootPath/doc"
+
+journal_template="$doRootPath/journal.md"
+journal_yesterday_file="$docRootPath/$yesterday-journal.md"
+journal_file="$docRootPath/$today-journal.md"
+
 function usage() {
-  echo "  journal [OPTION] [TERM]"
   
+  echo "  journal [OPTION] [TERM]"  
   exit
 }
 
-create(){
+create(){	
+	
+	add_header(){
+	
+		"$TODO_FULL_SH" markdown add yaml "Journal Notes" "$journal_file"
+		"$TODO_FULL_SH" markdown add yaml "$longdate" "$journal_file"
+		"$TODO_FULL_SH" markdown add yaml "$author" "$journal_file"
+		"$TODO_FULL_SH" markdown add blank "" "$journal_file"
+	
+	}
+	
+	add_general_info(){
+	
+		"$TODO_FULL_SH" markdown add H3 "General Information" "$journal_file"
+		"$TODO_FULL_SH" markdown add p "Day of Week : $dayOfWeeK" "$journal_file"
+		# TODO : add weather info
+		# TODO : add information about day
+	}
+	
+	# Standup report
+	add_standup_report(){
+	
+		
+		"$TODO_FULL_SH" markdown add H3 "Standup" "$journal_file"
+	
+		# last day
+		echo
+		echo "What is the key things you did last day ?"
+		echo
+		keythyesterday=$(sed '/^$/q')
+		"$TODO_FULL_SH" markdown add li "*What I did in the last day : *" "$journal_file"
+		echo $keythyesterday >>"$journal_file"
+		
+		# today
+		echo
+		echo "what will you do today ?"
+		echo
+		keythtoday=$(sed '/^$/q')
+		"$TODO_FULL_SH" markdown add li "*What I will do today ? : *" "$journal_file"
+		echo $keythtoday >>"$journal_file"
+		
+		#road blocks
+		echo
+		echo "what are the roadblocks are you facing ?"
+		echo
+		roadblocks=$(sed '/^$/q')
+		"$TODO_FULL_SH" markdown add li "*Roadblocks* : " "$journal_file"
+		echo $roadblocks >>"$journal_file"
 
-	docJournalFile="$@"	
+		# add blank line
+		"$TODO_FULL_SH" markdown add blank "" "$journal_file"
+		
+	}
+	
+	add_task_schedule(){
+	
+		# Dump the today's scheduled tasks from todo.txt and extra line breaks
+		"$TODO_FULL_SH" markdown add H3 "Scheduled Tasks" "$journal_file"	  
+		sed -n -e 's/'$longdate'/* &/p'<"$TODO_FILE" >>"$journal_file"
+		printf "\n">>"$journal_file"
+
+	}
+		
+	append_template(){
+	
+		# Read input file into a string variable. 
+		# Thanks : http://stackoverflow.com/a/2789399/2182047  
+		copyfilecontent=$(cat "$journal_template")
+		#copy contents to journal file
+		printf "$copyfilecontent" >>"$journal_file"  
+		# add two blank line
+		printf "\n\n" >>"$journal_file"	
+		
+	}
 	
 	# check if file exists or not
-	if [ ! -f "$docJournalFile" ];then
+	if [ ! -f "$journal_file" ];then
 	  
-	  "$TODO_FULL_SH" markdown add H1 "$today $dayOfWeeK Journal" "$docJournalFile"
-	  "$TODO_FULL_SH" markdown add p "*Date of Creation* : $longdate" "$docJournalFile"	  
-	  "$TODO_FULL_SH" markdown add H2 "Scheduled Tasks" "$docJournalFile"   
-	  
-	  # Dump the today's scheduled task to todo.txt and extra line breaks	  
-	  sed -n -e 's/'$longdate'/* &/p'<"$doTodoFile" >>"$docJournalFile"
-	  printf "\n">>"$docJournalFile"
-
-	  # Read input file into a string variable. 
-	  # Thanks : http://stackoverflow.com/a/2789399/2182047  
-	  copyfilecontent=$(cat "$doJournalPath")
-	  #copy contents to journal file
-	  printf "$copyfilecontent" >>"$docJournalFile"  
-	  # add two blank line
-	  printf "\n\n" >>"$docJournalFile"	  
+		add_header
+		add_general_info
+		add_standup_report
+		add_task_schedule
+		# TODO : get google calendar agenda using [insanum/gcalcli: Google Calendar Command Line Interface](https://github.com/insanum/gcalcli)	
+		append_template
 
 	fi
-	"$TODO_FULL_SH" file open "$docJournalFile"
+	"$TODO_FULL_SH" file open "$journal_file"
 }
 
 open(){
 	
-	docJournalFile="$@"		
+	journal_file="$@"		
 	# check if file exists or not
-	if [ -f "$docJournalFile" ];then
-		"$TODO_FULL_SH" file open "$docJournalFile"
+	if [ -f "$journal_file" ];then
+		"$TODO_FULL_SH" file open "$journal_file"
 	fi	
+	
 }
 
 # //TODO : improve
 
-addDoneItemsToJournal(){
+add_todo_done_items(){
 
-	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$docJournalFile"
-	"$TODO_FULL_SH" listall "x $longdate" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$docJournalFile"
+	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$journal_file"
+	"$TODO_FULL_SH" listall "x $longdate" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$journal_file"
 }
 
-addDoneItemsToYesterdayJournal(){
+add_todo_done_items_to_yesterday_journal(){
 
 	## //TODO : improve
-	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$docYesterdayJournalFile"
-	"$TODO_FULL_SH" listall "x $longyesterday" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$docYesterdayJournalFile"
+	"$TODO_FULL_SH" markdown add H2 "Done Tasks" "$journal_yesterday_file"
+	"$TODO_FULL_SH" listall "x $longyesterday" | sed -n -e 's/[0-9][0-9][0-9] x [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ \* /p'>>"$journal_yesterday_file"
+
+}
+
+add_gratitude(){
+
+	"$TODO_FULL_SH" markdown add H3 "Thank You" "$journal_file"	  
+	echo
+	echo "To whom you are thankful to :"
+	echo	
+	helped=$(sed '/^$/q')
+	"$TODO_FULL_SH" markdown add p "Today I am thankful to these people" "$journal_file"
+	echo $helped >>"$journal_file"
 
 }
 
@@ -78,56 +160,49 @@ shift
 	"usage")
 		usage
 		exit	
-	;;
+		;;
 	
 	"create")
-		if [[ -z "$1" ]]; then
-		   echo "journal error : few argument"
-		   #usage
-		else		   
-		   filepath="$@"		   
-		   create $filepath
-		fi					
+		create				
 		exit
-	;;
+		;;
 	
-	"open")
-		if [[ -z "$1" ]]; then
-		   echo "journal error : few argument"
-		   #usage
-		else		   
-		   filepath="$@"		   
-		   open $filepath
-		fi					
+	"open")			   	
+		open		
 		exit		
-	;;
+		;;
 	
-	"log")	  
-	
-	#TODO: update with filepath
+	"add")
+		
+		#TODO: update with filepath		
 		if [[ -z "$1" ]]; then
 		   echo "journal error : few argument"
-		   #usage
 		else
-		   PARAM="$1"		
+		   PARAM="$1"		   
 		   case "$PARAM" in
-				today)
-					addDoneItemsToJournal	
-					;;
-				yesterday)
-					addDoneItemsToYesterdayJournal
-					;;					
-				esac
+			todo_today)			
+				add_todo_done_items	
+				exit
+				;;			
+			todo_yesterday)
+				add_todo_done_items_to_yesterday_journal
+				exit
+				;;					
+			gratitude)
+				add_gratitude
+				exit
+				;;				
+			esac		
 		fi	
 		exit
-    ;;	
+		;;				
 	
 	*)
-	# list planner file	
-	 echo
-	 echo "journal error : arguments - $@ - not valid" 
-	 echo 
-	 usage
-	 exit
-	;;	   
+		# list planner file	
+		echo
+		echo "journal error : arguments - $@ - not valid" 
+		echo 
+		usage
+		exit
+		;;	   
 esac
