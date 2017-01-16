@@ -49,8 +49,9 @@ create(){
 		echo
 		echo "What is the key things you did last day ?"
 		echo
-		keythyesterday=$(sed '/^$/q')
-		"$TODO_FULL_SH" markdown add li "*What did I do last day* : " "$journal_file"
+		keythyesterday=$(sed '/^$/q')		
+		"$TODO_FULL_SH" markdown add blank "" "$journal_file"
+		"$TODO_FULL_SH" markdown add p "*What did I do last day*" "$journal_file"		
 		echo $keythyesterday >>"$journal_file"
 		
 		# today
@@ -58,7 +59,8 @@ create(){
 		echo "what will you do today ?"
 		echo
 		keythtoday=$(sed '/^$/q')
-		"$TODO_FULL_SH" markdown add li "*What I will do today ?* : " "$journal_file"
+		"$TODO_FULL_SH" markdown add blank "" "$journal_file"		
+		"$TODO_FULL_SH" markdown add p "*What I will do today ?*" "$journal_file"		
 		echo $keythtoday >>"$journal_file"
 		
 		#road blocks
@@ -66,7 +68,7 @@ create(){
 		echo "what are the roadblocks are you facing ?"
 		echo
 		roadblocks=$(sed '/^$/q')
-		"$TODO_FULL_SH" markdown add li "*Roadblocks* : " "$journal_file"
+		"$TODO_FULL_SH" markdown add p "*Roadblocks*" "$journal_file"		
 		echo $roadblocks >>"$journal_file"
 
 		# add blank line
