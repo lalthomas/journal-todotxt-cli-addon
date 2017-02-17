@@ -60,7 +60,7 @@ create(){
 		echo
 		keythtoday=$(sed '/^$/q')
 		"$TODO_FULL_SH" markdown add blank "" "$journal_file"		
-		"$TODO_FULL_SH" markdown add p "*What I will do today ?*" "$journal_file"		
+		"$TODO_FULL_SH" markdown add p "*What I will do today ?*" "$journal_file"
 		echo $keythtoday >>"$journal_file"
 		
 		#road blocks
@@ -68,6 +68,7 @@ create(){
 		echo "what are the roadblocks are you facing ?"
 		echo
 		roadblocks=$(sed '/^$/q')
+		"$TODO_FULL_SH" markdown add blank "" "$journal_file"
 		"$TODO_FULL_SH" markdown add p "*Roadblocks*" "$journal_file"		
 		echo $roadblocks >>"$journal_file"
 
