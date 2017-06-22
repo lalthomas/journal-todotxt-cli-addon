@@ -98,6 +98,17 @@ create(){
 		
 	}
 	
+	add_google_calendar_schedule(){
+	
+		"$TODO_FULL_SH" markdown add H3 "Scheduled Events" "$journal_file"
+		printf "Start Time			End Time			Event Title" >>"$journal_file"		
+		printf '\n%s\n' "-----------------	-----------------	--------------------------" >>"$journal_file"
+		/cygdrive/c/Python27/python.exe "C:\Python27\Scripts\gcalcli" -nocolor -tsv agenda '12am' '11pm' >>"$journal_file"
+		printf "\n">>"$journal_file"
+		
+	}
+	
+	add_birthday_list(){
 	# check if file exists or not
 	if [ ! -f "$journal_file" ];then
 	  
