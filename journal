@@ -109,6 +109,13 @@ create(){
 	}
 	
 	add_birthday_list(){
+
+		"$TODO_FULL_SH" markdown add H3 "Wish List" "$journal_file"
+		# add people from wish script			
+		"d:/Dropbox/project/20131027-scripts project/20160222-wish-bash script.sh" "/cygdrive/d/Dropbox/do/reference/20160222-greetings doc.csv" list today >>"$journal_file"
+		printf "\n">>"$journal_file"
+	}
+	
 	# check if file exists or not
 	if [ ! -f "$journal_file" ];then
 	  
