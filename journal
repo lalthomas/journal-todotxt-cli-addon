@@ -122,9 +122,14 @@ create(){
 		add_header
 		add_general_info
 		add_standup_report
+		echo "Adding task schedule and events. Please wait ..."
 		add_task_schedule
-		# TODO : get google calendar agenda using [insanum/gcalcli: Google Calendar Command Line Interface](https://github.com/insanum/gcalcli)	
-		append_template
+		add_birthday_list
+		# get google calendar agenda using [insanum/gcalcli: Google Calendar Command Line Interface](https://github.com/insanum/gcalcli)	
+		add_google_calendar_schedule
+		append_template		
+		echo 
+		echo "Journal created successfully"
 
 	fi
 	"$TODO_FULL_SH" file open "$journal_file"
