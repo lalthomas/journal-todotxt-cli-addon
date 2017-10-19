@@ -14,11 +14,6 @@ journal_template="$doRootPath/journal.md"
 journal_yesterday_file="$docRootPath/$yesterday-journal.md"
 journal_file="$docRootPath/$today-journal.md"
 
-function usage() {
-  
-  echo "  journal [OPTION] [TERM]"  
-  exit
-}
 
 create(){	
 	
@@ -112,8 +107,21 @@ create(){
 
 		"$TODO_FULL_SH" markdown add H3 "Wish List" "$journal_file"
 		# add people from wish script			
-		"d:/Dropbox/project/20131027-scripts project/20160222-wish-bash script.sh" "/cygdrive/d/Dropbox/do/reference/20160222-greetings doc.csv" list today >>"$journal_file"
+		"d:/project/20131027-scripts project/20160222-wish-bash script.sh" "/cygdrive/d/Dropbox/do/reference/20160222-greetings doc.csv" list today >>"$journal_file"
 		printf "\n">>"$journal_file"
+	}
+	
+	add_current_project(){
+		
+		# add circle info
+		b file path init "D:\do\reference\20161001-gtd project list.txt"
+		echo 
+		b file prompt "enter keyword for project : "
+		project="$(b file result)"
+		printf "### Today Projects\n">>"$journal_file"
+		printf "\n">>"$journal_file"
+		printf "$project" >>"$journal_file"
+		
 	}
 	
 	# check if file exists or not
@@ -127,7 +135,8 @@ create(){
 		add_birthday_list
 		# get google calendar agenda using [insanum/gcalcli: Google Calendar Command Line Interface](https://github.com/insanum/gcalcli)	
 		add_google_calendar_schedule
-		append_template		
+		add_current_project
+		append_template
 		echo 
 		echo "Journal created successfully"
 
@@ -136,8 +145,7 @@ create(){
 }
 
 open(){
-	
-	journal_file="$@"		
+		
 	# check if file exists or not
 	if [ -f "$journal_file" ];then
 		"$TODO_FULL_SH" file open "$journal_file"
@@ -174,6 +182,23 @@ add_gratitude(){
 	echo $helped >>"$journal_file"
 
 }
+
+usage() {
+  
+  echo "  journal [OPTIONS] [TERM]	"  
+  echo "						 	"
+  echo " OPTIONS			 	 	"
+  echo " -------                 	"
+  echo "  				 			"
+  echo " add gratitude				"  
+  echo " add todo_today				"  
+  echo " add todo_yesterday			"  
+  echo " create						"  
+  echo " open						"  
+  echo " usage						"
+  exit
+}
+
 
 # Get action
 action=$1
