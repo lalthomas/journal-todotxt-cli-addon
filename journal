@@ -107,7 +107,7 @@ create(){
 
 		"$TODO_FULL_SH" markdown add H3 "Wish List" "$journal_file"
 		# add people from wish script			
-		"d:/project/20131027-scripts project/20160222-wish-bash script.sh" "/cygdrive/d/Dropbox/do/reference/20160222-greetings doc.csv" list today >>"$journal_file"
+		"d:/project/20131027-scripts project/20160222-wish-bash script.sh" "/cygdrive/d/do/reference/20160222-greetings doc.csv" list today >>"$journal_file"
 		printf "\n">>"$journal_file"
 	}
 	
